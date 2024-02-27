@@ -2,6 +2,7 @@ package com.example.springbatchstudy.domain.adjust;
 
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,5 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface WalkerAdjustRepository extends JpaRepository<WalkerAdjust,Long> {
   @Query("SELECT wa FROM WalkerAdjust wa WHERE wa.userId = :walkerId AND wa.walkerAdjustDate = :adjustDate")
   Optional<WalkerAdjust> findByUserIdAndAndWalkerAdjustDate(@Param("walkerId") Long walkerId,@Param("adjustDate") LocalDate adjustDate);
+
+  List<WalkerAdjust> findByWalkerAdjustDate(LocalDate localDate);
 
 }

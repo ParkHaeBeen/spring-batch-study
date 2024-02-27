@@ -51,7 +51,7 @@ public class WalkerAdjust extends BaseEntity {
   private AdjustStatus walkerAdjustStatus=AdjustStatus.ADJUST_NOT_YET;
 
 
-  @OneToMany(mappedBy = "walkerAdjust",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "walkerAdjust",fetch = FetchType.LAZY)
   @Builder.Default
   private List <WalkerAdjustDetail> adjustDetailList=new ArrayList <>();
 
@@ -59,7 +59,4 @@ public class WalkerAdjust extends BaseEntity {
     this.walkerTtlPrice = price;
   }
 
-  public void addAdjustDetail(WalkerAdjustDetail adjustDetail){
-    this.adjustDetailList.add(adjustDetail);
-  }
 }

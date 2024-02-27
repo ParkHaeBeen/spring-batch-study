@@ -44,4 +44,7 @@ public class PayHistory extends BaseEntity {
   @Column(name = "pay_method",nullable = false)
   private String payMethod;
 
+  public void setStatus(PayStatus payStatus){
+    this.payStatus=payStatus;
+  }
 }

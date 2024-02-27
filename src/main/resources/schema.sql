@@ -121,7 +121,7 @@ create table walker_adjust (
 ) engine=InnoDB;
 
 create table walker_adjust_detail (
-                                      payhistory_id bigint,
+                                      pay_history_id bigint,
                                       walker_adjust_detail_id bigint not null auto_increment,
                                       walker_adjust_id bigint not null,
                                       walker_adjust_price bigint not null,
