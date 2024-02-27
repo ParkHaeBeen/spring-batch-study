@@ -96,3 +96,40 @@ CREATE TABLE BATCH_JOB_SEQ (
 ) ENGINE=InnoDB;
 
 INSERT INTO BATCH_JOB_SEQ (ID, UNIQUE_KEY) select * from (select 0 as ID, '0' as UNIQUE_KEY) as tmp where not exists(select * from BATCH_JOB_SEQ);
+
+
+create table pay_history (
+                             created_at datetime(6),
+                             pay_history_id bigint not null auto_increment,
+                             pay_price bigint,
+                             updated_at datetime(6),
+                             user_id bigint,
+                             pay_method varchar(255) not null,
+                             pay_status enum ('PAY_DONE','PAY_REFUND','ADJUST_DONE') not null,
+                             primary key (pay_history_id)
+) engine=InnoDB;
+
+create table walker_adjust (
+                               walker_adjust_date date not null,
+                               created_at datetime(6),
+                               updated_at datetime(6),
+                               user_id bigint not null,
+                               walker_adjust_id bigint not null auto_increment,
+                               walker_ttlprice bigint not null,
+                               walker_adjust_status enum ('ADJUST_END','ADJUST_NOT_YET') not null,
+                               primary key (walker_adjust_id)
+) engine=InnoDB;
+
+create table walker_adjust_detail (
+                                      payhistory_id bigint,
+                                      walker_adjust_detail_id bigint not null auto_increment,
+                                      walker_adjust_id bigint not null,
+                                      walker_adjust_price bigint not null,
+                                      walker_adjust_status enum ('PAY_REFUND','ADJUST_FINISH','ADJUST_NOT_YET') not null,
+                                      primary key (walker_adjust_detail_id)
+) engine=InnoDB;
+
+alter table walker_adjust_detail
+    add constraint FKiec4koqgagx02moe55h0m86gr
+        foreign key (walker_adjust_id)
+            references walker_adjust (walker_adjust_id);

@@ -58,6 +58,7 @@ public class SimpleJobConfig {
       for (PayHistory payHistory : payHistoryList) {
         Optional <WalkerAdjust> walkerAdjust = walkerAdjustRepository.findByUserIdAndAndWalkerAdjustDate(
             payHistory.getUserId() , LocalDate.now());
+        if(payHistory.getUserId()==5) throw new RuntimeException();
         if(walkerAdjust.isPresent()) {
           WalkerAdjust adjust = walkerAdjust.get();
           adjust.setPrice(adjust.getWalkerTtlPrice()+payHistory.getPayPrice());
