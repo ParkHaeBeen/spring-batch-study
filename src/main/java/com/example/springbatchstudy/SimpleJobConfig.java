@@ -4,6 +4,7 @@ import static com.example.springbatchstudy.domain.pay.PayStatus.PAY_DONE;
 
 import com.example.springbatchstudy.domain.adjust.WalkerAdjust;
 import com.example.springbatchstudy.domain.adjust.WalkerAdjustDetail;
+import com.example.springbatchstudy.domain.adjust.WalkerAdjustDetailRepository;
 import com.example.springbatchstudy.domain.adjust.WalkerAdjustRepository;
 import com.example.springbatchstudy.domain.pay.PayHistory;
 import com.example.springbatchstudy.domain.pay.PayHistoryRepository;
@@ -30,14 +31,16 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
+@EnableBatchProcessing
 public class SimpleJobConfig {
 
   private final PayHistoryRepository payHistoryRespository;
   private final WalkerAdjustRepository walkerAdjustRepository;
+  private final WalkerAdjustDetailRepository walkerAdjustDetailRepository;
 
   @Bean
   public Job adjustJob(JobRepository jobRepository , Step step1) {
-    return new JobBuilder("endOfDay" , jobRepository)
+    return new JobBuilder("adjust" , jobRepository)
         .start(step1)
         .build();
   }
@@ -58,16 +61,18 @@ public class SimpleJobConfig {
       for (PayHistory payHistory : payHistoryList) {
         Optional <WalkerAdjust> walkerAdjust = walkerAdjustRepository.findByUserIdAndAndWalkerAdjustDate(
             payHistory.getUserId() , LocalDate.now());
-        if(payHistory.getUserId()==5) throw new RuntimeException();
+
         if(walkerAdjust.isPresent()) {
           WalkerAdjust adjust = walkerAdjust.get();
           adjust.setPrice(adjust.getWalkerTtlPrice()+payHistory.getPayPrice());
-          adjust.addAdjustDetail(WalkerAdjustDetail.builder()
-                  .walkerAdjust(adjust)
-                  .walkerAdjustPrice(payHistory.getPayPrice())
-                  .payhistoryId(payHistory.getPayId())
-                  .build());
           walkerAdjustRepository.save(adjust);
+
+          WalkerAdjustDetail walkerAdjustDetail = WalkerAdjustDetail.builder()
+              .walkerAdjust(adjust)
+              .walkerAdjustPrice(payHistory.getPayPrice())
+              .payhistoryId(payHistory.getPayId())
+              .build();
+          walkerAdjustDetailRepository.save(walkerAdjustDetail);
 
         } else {
           WalkerAdjust adjust = WalkerAdjust.builder()
@@ -76,13 +81,14 @@ public class SimpleJobConfig {
               .build();
 
           adjust.setPrice(payHistory.getPayPrice());
-          adjust.addAdjustDetail(WalkerAdjustDetail.builder()
+          walkerAdjustRepository.save(adjust);
+
+          WalkerAdjustDetail walkerAdjustDetail = WalkerAdjustDetail.builder()
               .walkerAdjust(adjust)
               .walkerAdjustPrice(payHistory.getPayPrice())
               .payhistoryId(payHistory.getPayId())
-              .build());
-
-          walkerAdjustRepository.save(adjust);
+              .build();
+          walkerAdjustDetailRepository.save(walkerAdjustDetail);
         }
       }
 
