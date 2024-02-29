@@ -40,10 +40,10 @@ class SimpleJobConfigTest {
   @Test
   void test2(){
     payHistoryRespository.deleteAll();
-    for(int i =0;i<550;i++){
+    for(int i =0;i<80;i++){
       payHistoryRespository.save(PayHistory.builder()
           .payPrice((long) i)
-          .userId(1L+i/100)
+          .userId(1L+i/10)
           .payMethod("CARD")
           .build());
 

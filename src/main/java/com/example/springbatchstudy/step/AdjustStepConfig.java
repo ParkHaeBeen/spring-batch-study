@@ -50,12 +50,7 @@ public class AdjustStepConfig {
   public ItemReader<Long> payHistoryItemReader() {
     Map<String, Object> parameters = new HashMap <>();
     parameters.put("status", PAY_DONE);
-    JpaPagingItemReader <Long> reader = new JpaPagingItemReader <>(){
-      @Override
-      public int getPage() {
-        return 0;
-      }
-    };
+    JpaPagingItemReader <Long> reader = new JpaPagingItemReader <>();
     reader.setName("payHistoryReader");
     reader.setEntityManagerFactory(entityManagerFactory);
     reader.setQueryString("SELECT p.userId FROM PayHistory p WHERE p.payStatus = :status GROUP BY p.userId ORDER BY p.userId");
@@ -67,10 +62,10 @@ public class AdjustStepConfig {
 
   @Bean
   public ItemProcessor <Long, WalkerAdjust> payHistoryItemProcessor() {
-    return payHistoryId -> {
+    return userId -> {
 
       return WalkerAdjust.builder()
-          .userId(payHistoryId)
+          .userId(userId)
           .walkerAdjustDate(LocalDate.now())
           .build();
     };
@@ -82,7 +77,5 @@ public class AdjustStepConfig {
         .entityManagerFactory(entityManagerFactory)
         .build();
   }
-
-
 
 }
