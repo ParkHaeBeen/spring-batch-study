@@ -4,7 +4,7 @@
 
 [예제 설명 블로그](https://haebing.tistory.com/162)
 
-### ✔️ tasklet 브랜치
+### ✔️ tasklet 브랜치
 - tasklet 사용하여 step 구성
 
 ### ✔️ chunk 브랜치
